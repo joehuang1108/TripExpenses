@@ -1,6 +1,7 @@
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -12,8 +13,8 @@ public class App {
         // each person owe to each and every one
 
         List<String> friends = Arrays.asList("Alice", "Bob", "Carol", "Dave", "Eve");
-        String[] payers = {"Alice", "Bob", "Bob", "Carol", "Alice"};
-        double[] amounts = {150.0, 200.0, 180.0, 220.0, 250.0};
+        String[] payers = {"Alice", "Eve", "Bob", "Carol", "Dave"};
+        double[] amounts = {180.0, 250.0, 150.0, 200.0, 250.0};
 
         // Day 1
         // Alice +120
@@ -56,10 +57,65 @@ public class App {
             System.out.println(friend + " " + balances.get(friend));
         }
 
+        System.out.println("Simplified Debts");
+        simplifyDebts(balances);
 
 
+        // Simplify Expenses 
+        // End goal: The payers get their money back
+        // Creditors: 
+        // Debtors: 
+        // Find the largest creditor, and smallest debtor and pay out (repeat)
+        // Alice - Dave --> Alice: 0, Dave: 0
+        // Bob - Eve --> Bob: 0, Eve: -20 
+        // Alice 0.0
+        // Bob 0.0
+        // Carol 20.0
+        // Dave 0.0
+        // Eve -20.0
+    }
+
+    static void simplifyDebts(HashMap <String, Double> balances){
+        // Find the largest creditor, and smallest debtor and pay out (repeat)
+        PriorityQueue <Person> creditors = new PriorityQueue<>((a,b) -> Double.compare(b.amount, a.amount)); 
+        PriorityQueue <Person> debtors = new PriorityQueue<>((a,b) -> Double.compare(a.amount, b.amount));
+        
+        // Entry - Key/value pair
+        for(HashMap.Entry<String, Double> entry: balances.entrySet()){
+            String name = entry.getKey();
+            double amount = entry.getValue();
+            if(amount > 0){
+                creditors.offer(new Person(name, amount));
+            }
+            else if(amount < 0){
+                debtors.offer(new Person(name, -amount));
+            }
+        }
+
+        while(!creditors.isEmpty() && !debtors.isEmpty()){
+            Person creditor = creditors.poll();
+            Person debtor = debtors.poll();
+
+            double min = Math.min(creditor.amount, debtor.amount);
+            System.out.printf("%s owes %s: $%.2f\n", debtor.name, creditor.name, min);
+
+            if(creditor.amount > min){
+                creditors.offer(new Person(creditor.name, creditor.amount - min));
+            }
+            if(debtor.amount > min){
+                debtors.offer(new Person(debtor.name, debtor.amount - min));
+            }
+        }
         
 
+    }
 
+    static class Person{
+        String name;
+        double amount;
+        Person(String name, double amount){
+            this.name = name;
+            this.amount = amount;
+        }
     }
 }
