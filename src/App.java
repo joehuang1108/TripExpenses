@@ -1,7 +1,8 @@
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -12,9 +13,34 @@ public class App {
         // After a 5 day trip, calculate the total amount of money 
         // each person owe to each and every one
 
-        List<String> friends = Arrays.asList("Alice", "Bob", "Carol", "Dave", "Eve");
-        String[] payers = {"Alice", "Eve", "Bob", "Carol", "Dave"};
-        double[] amounts = {180.0, 250.0, 150.0, 200.0, 250.0};
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of friends: ");
+        int numFriends = sc.nextInt();
+        sc.nextLine();
+
+        List<String> friends = new ArrayList<>(); // Empty arraylist
+        for(int i = 0; i < numFriends; i++){
+            System.out.print("Enter friend " + (i + 1) + " name: ");
+            friends.add(sc.nextLine().trim());
+        }
+
+        System.out.print("Enter number of expense records: ");
+        int numRecords = sc.nextInt();  // number of purchase entries
+        sc.nextLine();
+
+        String[] payers = new String[numRecords];
+        double[] amounts = new double[numRecords];
+
+        for (int i = 0; i < numRecords; i++) {
+            System.out.println("Record " + (i + 1) + ":");
+            System.out.print("  Who paid? ");
+            payers[i] = sc.nextLine().trim();
+            System.out.print("  How much? ");
+            amounts[i] = sc.nextDouble();
+            sc.nextLine(); // consume newline
+        }
+
 
         // Day 1
         // Alice +120
@@ -36,7 +62,7 @@ public class App {
         }
         System.out.println(balances);
 
-        for(int day = 0; day < 5; day++){
+        for(int day = 0; day < numRecords; day++){
             // retrieve the total and the payer for each day
             String payer = payers[day];
             double total = amounts[day]; 
